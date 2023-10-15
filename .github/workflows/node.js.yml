@@ -39,6 +39,6 @@ jobs:
       uses: actions/create-release@v1
       with:
         files: ${{ steps.release.outputs.release_asset_path }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.TOKEN }}
         tag_name: v1.0.0 # Replace with your desired tag name
         release_name: Release 1.0.0 # Replace with your desired release name
