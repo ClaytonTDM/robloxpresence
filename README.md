@@ -1,2 +1,2 @@
-# robloxpresence
-sends roblox activity (joins, leaves) to a webhook of your choice
+# roblox presence
+sends roblox activity (joins, leaves) to a discord webhook of your choice
