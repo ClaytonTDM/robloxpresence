@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm install pkg -g && pkg -t latest-win-x64 -C Brotli index.js -o RobloxPresence.exe",
+    "build": "npm i pkg -g && pkg -t latest-win-x64 -C Brotli index.js -o RobloxPresence.exe",
     "start": "node index.js",
     "hwid": "node hwid.js",
     "cache": "node cache.js",
