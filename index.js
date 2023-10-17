@@ -3,11 +3,70 @@ const path = require('path');
 const Tail = require('tail').Tail;
 const os = require('os');
 const crypto = require('crypto');
+const fetch = require('node-fetch');
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// console.log('Located at: ' + path.join(process.execPath))
+// console.log('Log exists: ' + fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'RobloxPresence.json')))
+// console.log('Bloxstrap exists: ' + fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'Bloxstrap', 'Settings.json')))
+
+// read robloxpresence.json, if it exists then log "Started"
+if (fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'RobloxPresence.json'))) {
+  console.log('Started\n')
+}
+
+if (fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'Bloxstrap', 'Settings.json')) && !fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'RobloxPresence.json'))) {
+  readline.question('Bloxstrap detected! Would you like to add the webhook to custom integrations?\nY/N > ', response => {
+    if (response.toLowerCase() == 'yes' || response.toLowerCase() == 'y') {
+      const filePath = path.join(os.homedir(), 'AppData', 'Local', 'Bloxstrap', 'Settings.json');
+      const newData = {
+        Name: 'Roblox Presence Webhook',
+        Location: path.join(process.execPath),
+        LaunchArgs: '',
+        AutoClose: true,
+      };
+
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          // console.error('Error reading the file:', err);
+        } else {
+          const settings = JSON.parse(data);
+
+          if (!Array.isArray(settings.CustomIntegrations)) {
+            settings.CustomIntegrations = [];
+          }
+
+          settings.CustomIntegrations.push(newData);
+
+          fs.writeFile(filePath, JSON.stringify(settings, null, 2), (err) => {
+            if (err) {
+              // console.error('Error writing the file:', err);
+            } else {
+              console.log('\nDone! Started webhook.')
+              // console.log('Data added to CustomIntegrations array successfully.');
+            }
+          });
+        }
+      });
+    }
+    readline.close();
+  });
+}
+
+        // make a file in appdata called "RobloxPresence.json"
+        // if you don't have that file, it will create it for you
+        // NOTE: disabed for debugging (it's annoying)
+        if (!fs.existsSync(path.join(os.homedir(), 'AppData', 'Local', 'RobloxPresence.json'))) {
+          fs.writeFileSync(path.join(os.homedir(), 'AppData', 'Local', 'RobloxPresence.json'), '{"firstTimeRunning": false}')
+        }
 
 let userName
 let userId
 let displayName
-let placeId
+// let placeId
 let webhookURL = 'https://canary.discord.com/api/webhooks/1138271367876325406/xeyOBcLI4NKtWLPs7NwAQc2458u0-Gn6UJxlL6u4a9oCecox7czOUWUEqFzqUlIPTthh'
 
 // Generate a unique HWID based on system information
@@ -55,7 +114,7 @@ function findNewestLogFile() {
 
     return newestLog ? newestLog.filePath : null;
   } catch (error) {
-    console.error('Error reading log directory:', error);
+    // console.error('Error reading log directory:', error);
     return null;
   }
 }
@@ -69,11 +128,11 @@ function encodeName(inputString) {
   return resultString;
 }
 async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, placeId) {
-  console.log(`JobID ${jobId}`)
-  console.log(`DisplayName ${displayName}`)
-  console.log(`UserName ${userName}`)
-  console.log(`UserID ${userId}`)
-  console.log(`PlaceID ${placeId}`)
+  // console.log(`JobID ${jobId}`)
+  // console.log(`DisplayName ${displayName}`)
+  // console.log(`UserName ${userName}`)
+  // console.log(`UserID ${userId}`)
+  // console.log(`PlaceID ${placeId}`)
   try {
     // Fetch game details from the Roblox API
     const gameDetailsResponse = await fetch(`https://economy.roblox.com/v2/assets/${placeId}/details`);
@@ -95,9 +154,9 @@ async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, pl
       formattedCreatorUrl = `https://roblox.com/users/${creatorId}/profile`
     }
 
-    console.log(`GameName ${gameName}`)
-    console.log(`CreatorName ${creatorName}`)
-    console.log(`CreatorID ${creatorId}`)
+    // console.log(`GameName ${gameName}`)
+    // console.log(`CreatorName ${creatorName}`)
+    // console.log(`CreatorID ${creatorId}`)
 
     // Fetch headshot URL from the Roblox API
     const headshotResponse = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=48x48&format=Png&isCircular=false`);
@@ -107,7 +166,7 @@ async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, pl
     const headshotData = await headshotResponse.json();
     const headshotUrl = headshotData.data[0].imageUrl;
 
-    console.log(`HeadshotURL ${headshotUrl}`)
+    // console.log(`HeadshotURL ${headshotUrl}`)
 
     // Fetch thumbnail URL from the Roblox API
     const thumbnailResponse = await fetch(`https://thumbnails.roblox.com/v1/places/gameicons?placeIds=${placeId}&returnPolicy=PlaceHolder&size=256x256&format=Png&isCircular=false`);
@@ -117,7 +176,7 @@ async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, pl
     const thumbnailData = await thumbnailResponse.json();
     const thumbnailUrl = thumbnailData.data[0].imageUrl;
 
-    console.log(`ThumbnailURL ${thumbnailUrl}`)
+    // console.log(`ThumbnailURL ${thumbnailUrl}`)
 
     // Prepare the data for the Discord webhook
     /*
@@ -178,16 +237,16 @@ async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, pl
       throw new Error(`Failed to send Discord webhook. Status: ${response.status}`);
     }
 
-    console.log('Sent!');
+    // console.log('Sent!');
   } catch (error) {
-    console.error('Error:', error);
+    // console.error('Error:', error);
   }
 }
 
 async function sendLeaveHook(webhookURL, displayName, userName, userId) {
-  console.log(displayName)
-  console.log(userName)
-  console.log(userId)
+  // console.log(displayName)
+  // console.log(userName)
+  // console.log(userId)
   try {
     // Fetch headshot URL from the Roblox API
     const headshotResponse = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=48x48&format=Png&isCircular=false`);
@@ -197,7 +256,7 @@ async function sendLeaveHook(webhookURL, displayName, userName, userId) {
     const headshotData = await headshotResponse.json();
     const headshotUrl = headshotData.data[0].imageUrl;
 
-    console.log(`HeadshotURL ${headshotUrl}`)
+    // console.log(`HeadshotURL ${headshotUrl}`)
 
     // Prepare the data for the Discord webhook
     /*
@@ -246,9 +305,9 @@ async function sendLeaveHook(webhookURL, displayName, userName, userId) {
       throw new Error(`Failed to send Discord webhook. Status: ${response.status}`);
     }
 
-    console.log('Discord webhook sent successfully');
+    // console.log('Discord webhook sent successfully');
   } catch (error) {
-    console.error('Error sending Discord webhook:', error);
+    // console.error('Error sending Discord webhook:', error);
   }
 }
 
@@ -264,17 +323,17 @@ function itemFromJoinUrl(url, item) {
   } else if (item === 'UserId') {
     regex = new RegExp(`%22${item}%22%3a([^%]+)%2c.*`)
   } else {
-    console.log('Invalid item parameter');
+    // console.log('Invalid item parameter');
     return null;
   }
 
   const match = url.match(regex);
 
   if (match) {
-    console.log(`Matched found for ${item}`);
+    // console.log(`Matched found for ${item}`);
     return decodeURIComponent(match[1]); // Decode URL-encoded value
   } else {
-    console.log(`No match for ${item}`);
+    // console.log(`No match for ${item}`);
     return null;
   }
 }
@@ -296,7 +355,7 @@ function startLogTailing() {
 
 
       if (line.includes('"joinScriptUrl"')) {
-        console.log('URL line found')
+        // console.log('URL line found')
         userName = itemFromJoinUrl(line, 'UserName')
         displayName = itemFromJoinUrl(line, 'DisplayName')
         placeId = itemFromJoinUrl(line, 'PlaceId')
@@ -324,7 +383,7 @@ function startLogTailing() {
     // Handle any cleanup when the script is terminated
     process.on('SIGINT', () => {
       logTail.unwatch();
-      console.log('Script terminated');
+      // console.log('Script terminated');
       process.exit();
     });
   }
@@ -332,7 +391,7 @@ function startLogTailing() {
 
 
 // Start monitoring the newest log file
-console.log('Started\n')
+// console.log('Started\n')
 startLogTailing();
 
 // Periodically check for the newest log file and switch if necessary
