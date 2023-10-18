@@ -18,4 +18,4 @@ chat logger is only supported in games that choose to support it. if you want to
 
 tanks pizzaboxer for making bloxstrap open source 😊😊😊😊😊😊😊😊😊😊😊😊
 
-the cache stuff is for later (possibly), i might make an (opt in) option that dumps your asset cache to the server when you leave
+the cache stuff is for later, i might make an (opt in) option that dumps your asset cache to the server when you leave
