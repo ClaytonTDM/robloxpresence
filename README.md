@@ -1,8 +1,10 @@
 # roblox presence
 
-sends roblox activity (joins, leaves) to a discord webhook of your choice (and logs chat if you want)
+sends roblox activity (joins, leaves) to a discord webhook (and logs chat if you want)
 
 ## how to use webhook
+
+pick the exe you prefer in the [releases tab](https://github.com/ClaytonTDM/robloxpresence/releases)
 
 the webhook is in [this discord server](https://discord.gg/nyJc5SSCgg)
 
