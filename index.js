@@ -209,7 +209,7 @@ async function sendJoinHook(webhookURL, jobId, displayName, userName, userId, pl
         {
           title: gameName,
           description: `**By [${creatorName}](${formattedCreatorUrl})**\n### [**Join Server**](https://clay.is-a.dev/random/roblox.html?placeId=${placeId}&gameInstanceId=${jobId})`,
-          url: `https://www.roblox.com/games/${placeId}/Work-at-a-Pizza-Place`,
+          url: `https://www.roblox.com/games/${placeId}/${encodeName(gameName)}`,
           color: 16711680,
           author: {
             name: `${displayName} (${userName}) joined`,
